@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="author" content="">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="css/normalize.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+	<div>
+		<button onClick="addVariavelDecisao()">Adicionar variável de decisão</button>
+		<br/>
+	</div>
+  <form action="{{ url_for('simplex') }}" method="GET">
+	<!-- INÍCIO DAS VARIÁVEIS DE DECISÃO -->
+	<span id="variaveis-decisao">
+		<label>Variável</label>
+		<input class="variavel-decisao" value="x1" name="var1" readonly></input>
+		</br>
+	</span>
+	</br>
+	<label>Função objetivo</label>
+	<input name="funcao_objetivo"></input>
+	</br>
+	<!-- FIM DAS VARIÁVEIS DE DECISÃO -->
+	<!-- INÍCIO DAS RESTRIÇÕES DAS VARIÁVEIS -->
+	<label>RESTRIÇÕES</label>
+	</br>
+	<a href = "#" onClick="addRestricao()">Adicionar restrição</a>
+	</br>
+	<!-- aa -->
+	<span id="restricoes">
+		<span class="restricao linha1">
+			<span class="variaveis-restricao">
+				<input name="valor1linha1"></input>
+				<select class="variavel-decisao-na-restricao">
+					<option class="variavelOpcao" value="x1">x1</option>
+				</select>
+			</span>
+			<select name="operacao">
+				<option value="=">=</option>
+				<option value=">=">>=</option>
+				<option value="<="><=</option>
+			</select>
+			<input name="valor1"></input>
+			<a onClick="addVariavelNaRestricao(1)" href="#">Adicionar variável na restrição</a>
+			</br>
+		</span>
+	</span>
+	<!-- -->
+	<input type="submit"/>
+  </form>
+  <p>Resultado ótimo: {{valor_max}}</p>
+  <p>Quantidade de X1 tem que ser igual a: {{valor_x1}}</p>
+  <p>Quantidade de X2 tem que ser igual a: {{valor_x2}}</p>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+	qtdRestricoes = 1
+  
+	function addVariavelDecisao() {
+		let qtdVariaveis = retornarQuantidadeVariaveis() + 1;
+		$("#variaveis-decisao").append("<label>Variável </label><input readonly class=\"variavel-decisao\" name=\"var" + qtdVariaveis + "\" value=\"x" + qtdVariaveis + "\"></input></br>");
+		addOptionPorVariavelDecisao(".variavel-decisao-na-restricao");
+	}
+	
+	function addVariavelNaRestricao() {
+		let qtdVariaveisNaRestricao = retornarQuantidadeVariaveisNaRestricao() + 1;
+		$(".linha" + qtdRestricoes + " .variaveis-restricao").append("<input name=\"valor" + qtdVariaveisNaRestricao + "\"></input><select class=\"variavel-decisao-na-restricao\">" + addOptionPorVariavelDecisao(".variavel-decisao-na-restricao") + "</select>");
+		addOptionPorVariavelDecisao(".variavel-decisao-na-restricao");
+	}
+	
+	function limparOptions(identificador) {
+		$(identificador).remove();
+	}
+	
+	function addOptionPorVariavelDecisao(identificador) {
+		let qtdVariaveis = retornarQuantidadeVariaveis();
+		limparOptions(".variavelOpcao");
+		for (i = 1; i <= qtdVariaveis; ++i) {
+			$(identificador).append("<option class=\"variavelOpcao\" value=\"x" + i + "\">x" + i + "</option>");
+		}
+	}
+	
+	function retornarQuantidadeVariaveis() {
+		return $(".variavel-decisao").length;
+	}
+	
+	function retornarQuantidadeVariaveisNaRestricao() {
+		return $(".variavel-decisao-na-restricao").length;
+	}
+	
+	
+	function retornarQuantidadeRestricoes() {
+		qtdRestricoes++
+		return qtdRestricoes
+		//return $(".restricao").length;
+	}
+	
+	function addRestricao() {
+		let qtdRestricoes = retornarQuantidadeRestricoes();
+		let qtdVariaveisNaRestricao = retornarQuantidadeVariaveisNaRestricao() + 1;
+		console.log("Restrições: " + qtdRestricoes);
+		$("#restricoes").append("<span class=\"restricao linha" + qtdRestricoes + "\"><span class=\"variaveis-restricao\"><input name=\"valor" + qtdVariaveisNaRestricao + "\"></input><select class=\"variavel-decisao-na-restricao\"><option class=\"variavelOpcao\" value=\"x1\">x1</option></select></span><select name=\"operacao\"><option value=\"=\">=</option><option value=\">=\">>=</option><option value=\"<=\"><=</option></select><input></input><a onClick=\"addVariavelNaRestricao("+qtdRestricoes+")\" href=\"#\">Adicionar variável restrição</a></br></span>");
+	}
+  </script>
+</body>
+
+</html>
+

@@ -75,6 +75,7 @@ def is_resultado_otimo(nova_tabela):
     return True
 
 def identificar_coluna_entra(tabela, lista_variaveis):
+    print(lista_variaveis)
     primeira_linha = tabela.iloc[0]
     lista_valores = []
     
@@ -96,22 +97,53 @@ def identificar_coluna_entra(tabela, lista_variaveis):
 
 @app.route("/simplex", methods=['GET'])
 def simplex():
-    for chave in request.args:
-        valor = request.args.get(chave)
-        print(chave, valor)
-        print('-----')
+    funcao_objetivo = request.args.get('funcao_objetivo')
+    termos_funcao_objetivo = funcao_objetivo.split('+')
+    funcao_objetivo_dict = {}
+    
+    for termo in termos_funcao_objetivo:
+        termo = termo.strip()
+        partes_termo = termo.split(' ', 2)
+        coef = float(partes_termo[0])
+        variavel = partes_termo[1]
+
+        
+        funcao_objetivo_dict[variavel] = coef
+        
 
 
+    print(funcao_objetivo_dict)
     # FUNCAO OBJETVIO
-    z = collections.OrderedDict({'x1':10,'x2':12})
+    z = collections.OrderedDict(funcao_objetivo_dict)
     lista_variaveis = z.keys()
     print(lista_variaveis)
     print(z)
     
     ####
     
-    restricoes = [collections.OrderedDict({'x1':1,'x2':1,'op':'<=','b':100}),
-                    collections.OrderedDict({'x1':1,'x2':3,'op':'<=','b':270})]
+    texto_restricoes = request.args.get('restricoes')
+    lista_restricoes = texto_restricoes.split(';')
+    restricoes = []
+    for restricao in lista_restricoes:
+        rest_dict = {}
+        partes = restricao.split('<=')
+        b = partes[1]
+        esquerda = partes[0].strip()
+        termos = esquerda.split('+')
+        for termo in termos:
+            termo = termo.strip()
+            partes_termo = termo.split(' ')
+            coef = float(partes_termo[0])
+            variavel = partes_termo[1]
+            
+            rest_dict[variavel] = coef
+        
+        rest_dict['op'] = '<='
+        rest_dict['b'] = float(b)
+        
+        restricoes.append(rest_dict)
+        
+    
     print(restricoes)
 
     ####
@@ -173,11 +205,8 @@ def simplex():
     print('Valor da maximização: ' + str(nova_tabela['b'][0]))
     print('Valor de x1: ' + str(nova_tabela['b'][1]))
     print('Valor de x2: ' + str(nova_tabela['b'][2]))
-            
-    
-    
 
-    return render_template('simplex.html', valor_x1=999, valor_x2=888, valor_max = 7777)
+    return render_template('simplex.html', valor_x1=str(nova_tabela['b'][1]), valor_x2=str(nova_tabela['b'][2]), valor_max = str(nova_tabela['b'][0]))
 
 # Página inicial
 @app.route("/")
