@@ -15,6 +15,7 @@
 <body>
 
   <form action="{{ url_for('simplex') }}" method="GET">
+	<p style="color: red;">OBSERVAÇÃO IMPORTANTE: Verificar o padrão dos exemplos. O sistema só aceita função objetivo e restrições com coeficientes positivos e espaço entre coeficiente e variável. Caso alguma informação não seja exibida na interface, verifique o log do Python que será exibida a tabela onde encontrou o resultado ótimo.</p>
 	<p>Função Objetivo:<br/>Exemplo: 10 x1 + 12 x2<br/> <input type='text' id="funcao_objetivo" name='funcao_objetivo' value=''/>
 	<p>Restrições:<br/>Exemplo: 1 x1 + 1 x2 <= 100; 1 x1 + 3 x2 <= 270 <input style="width: 100%" type='text' id="restricoes" name='restricoes' value=''/>
 	<!-- -->
